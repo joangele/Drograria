@@ -63,6 +63,7 @@ public class GenericDAO<Entidade> {
 	public List<Entidade> listar() {
 		Session session = HibernateUtil.getFabricaDeSessoes().openSession();
 		try {
+			//aqui que eu uso o reflect linha 37 --> classe 
 			Criteria consulta = session.createCriteria(classe) ; 
 			List<Entidade> resultado = consulta.list();
 			return resultado;

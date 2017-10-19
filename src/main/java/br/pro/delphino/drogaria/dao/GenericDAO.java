@@ -7,6 +7,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 
 import br.pro.delphino.drogaria.util.HibernateUtil;
 
@@ -72,6 +73,69 @@ public class GenericDAO<Entidade> {
 			throw erro;
 		}finally {
 			session.close();
+		}
+
+	}
+	
+	public Entidade buscar( Long codigo) {
+		Session session = HibernateUtil.getFabricaDeSessoes().openSession();
+		try {
+			//aqui que eu uso o reflect linha 37 --> classe 
+			Criteria consulta = session.createCriteria(classe) ; 
+			//aqui adiciono as retricoes relacionada a querys sql --> ver outros tipos nas classe Retrictions
+			consulta.add(Restrictions.idEq(codigo));
+			Entidade resultado = (Entidade) consulta.uniqueResult();			
+			
+			return resultado;
+
+		} catch (RuntimeException erro) {
+			throw erro;
+		}finally {
+			session.close();
+		}
+
+	}
+	
+	public void excluir(Entidade entidade) {
+		Session session = HibernateUtil.getFabricaDeSessoes().openSession();
+		Transaction transacao = null;
+
+		try {
+			transacao = session.beginTransaction();
+			session.delete(entidade);
+			transacao.commit();
+		} catch (RuntimeException erro) {
+
+			if (transacao != null) {
+				transacao.rollback();
+			}
+			throw erro;
+
+		} finally {
+			session.close();
+
+		}
+
+	}
+	
+	public void editar(Entidade entidade) {
+		Session session = HibernateUtil.getFabricaDeSessoes().openSession();
+		Transaction transacao = null;
+
+		try {
+			transacao = session.beginTransaction();
+			session.update(entidade);
+			transacao.commit();
+		} catch (RuntimeException erro) {
+
+			if (transacao != null) {
+				transacao.rollback();
+			}
+			throw erro;
+
+		} finally {
+			session.close();
+
 		}
 
 	}
